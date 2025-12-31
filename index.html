@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy New Year, Tanya! 🎉</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@400;700&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+    height:100vh;
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container {
+    text-align:center;
+    color:#fff;
+    padding:30px;
+    background: rgba(0,0,0,0.35);
+    border-radius:25px;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+    max-width:800px;
+}
+
+h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size:3rem;
+    margin-bottom:20px;
+    color:#ffeb3b;
+    text-shadow:2px 2px 5px #000;
+}
+
+p { font-size:1.2rem; margin-bottom:20px; }
+
+.heart { font-size:2rem; color:#ff1744; cursor:pointer; }
+
+button {
+    padding:12px 25px;
+    font-size:1rem;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:#ff1744;
+    color:#fff;
+    transition:0.3s;
+}
+button:hover { background:#ff4569; }
+
+/* Sliding photos */
+.photos {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin:20px 0;
+    animation: slideIn 2s ease-out;
+}
+.photos img {
+    width:160px;
+    height:160px;
+    border-radius:15px;
+    object-fit:cover;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s;
+}
+.photos img:hover { transform: scale(1.1); }
+@keyframes slideIn { from { transform: translateY(-50px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+/* Fireworks */
+canvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; }
+
+/* Heart pop animation */
+.heart-pop {
+    position:absolute;
+    font-size:30px;
+    animation: pop 1s ease-out forwards;
+}
+@keyframes pop {
+    0% { transform: scale(0); opacity:1; }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(0); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="container">
+    <h1>Happy New Year, Tanya! 🎉</h1>
+    <p>You take care of me like a baby, love me endlessly, and make my life so beautiful. ❤️</p>
+    <p class="heart" onclick="createHeart(event)">💖</p>
+
+    <div class="photos">
+        <img src="photo1.jpg" alt="Memory 1">
+        <img src="photo2.jpg" alt="Memory 2">
+        <img src="photo3.jpg" alt="Memory 3">
+    </div>
+
+    <button onclick="showMessage()">Click for a Surprise 💌</button>
+    <p id="surprise" style="margin-top:20px; font-size:1.2rem;"></p>
+
+    <div style="margin-top:20px;">
+        <button onclick="playVoice()">🎤 Play My Voice Message</button>
+        <audio id="voiceMessage">
+            <source src="voice.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+</div>
+
+<script>
+// Surprise message
+function showMessage() {
+    const surprise = document.getElementById('surprise');
+    surprise.innerHTML = "I love you, Tanya, more than anything! Let's make this year unforgettable together! 🥰";
+}
+
+// Play voice message
+function playVoice() {
+    const audio = document.getElementById('voiceMessage');
+    audio.play();
+}
+
+// Heart pop effect
+function createHeart(e){
+    const heart = document.createElement('div');
+    heart.className = 'heart-pop';
+    heart.style.left = e.clientX + 'px';
+    heart.style.top = e.clientY + 'px';
+    heart.innerText = '💖';
+    document.body.appendChild(heart);
+    setTimeout(()=>{ heart.remove(); },1000);
+}
+
+// Fireworks
+const canvas = document.getElementById('fireworks');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let fireworks = [];
+let particles = [];
+
+class Firework {
+    constructor(x,y){ this.x=x; this.y=y; this.exploded=false; this.particles=[]; }
+    explode() {
+        this.exploded=true;
+        for(let i=0;i<60;i++){ this.particles.push(new Particle(this.x,this.y)); }
+    }
+    draw(){ if(!this.exploded){ ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(this.x,this.y,3,0,Math.PI*2); ctx.fill(); } }
+}
+
+class Particle {
+    constructor(x,y){
+        this.x=x; this.y=y; 
+        this.vx=Math.random()*6-3; this.vy=Math.random()*6-3;
+        this.alpha=1;
+        this.color=`hsl(${Math.random()*360},100%,60%)`;
+    }
+    update(){ this.x+=this.vx; this.y+=this.vy; this.alpha-=0.02; }
+    draw(){ 
+        ctx.fillStyle = `hsla(${this.color.match(/\d+/g)[0]},100%,60%,${this.alpha})`;
+        ctx.beginPath(); ctx.arc(this.x,this.y,3,0,Math.PI*2); ctx.fill(); 
+    }
+}
+
+function animate(){
+    ctx.fillStyle='rgba(0,0,0,0.2)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    if(Math.random()<0.05) fireworks.push(new Firework(Math.random()*canvas.width,canvas.height));
+    fireworks.forEach(f=>{
+        f.draw();
+        if(!f.exploded && Math.random()<0.02) f.explode();
+        f.particles.forEach(p=>{ p.update(); p.draw(); });
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
