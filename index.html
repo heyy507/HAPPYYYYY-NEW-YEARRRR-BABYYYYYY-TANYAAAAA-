@@ -114,7 +114,7 @@ canvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-even
     <source src="voice.m4a" type="audio/mp4">
 </audio>
 
-<button onclick="playVoice()">🎤 Play My Voice Message</button>
+
 
 <script>
 function playVoice() {
@@ -189,10 +189,28 @@ function animate(){
     requestAnimationFrame(animate);
 }
 animate();
+ </script>
+<p id="surprise" style="margin-top:20px; font-size:1.2rem;"></p>
+
+<audio id="voiceMessage">
+    <source src="voice.m4a" type="audio/mp4">
+</audio>
+
+<script>
+function showMessage() {
+    document.getElementById("surprise").innerHTML =
+    "I love you so much, Tanya ❤️ Thank you for taking care of me like your little baby. Let’s make this year unforgettable together 🥰✨";
+}
+
+function playVoice() {
+    document.getElementById("voiceMessage").play();
+}
 </script>
+
 
 </body>
 </html>
+
 
 
 
